@@ -6,7 +6,10 @@
 package com.kostenko.fchooser;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -34,10 +37,9 @@ public class Weather implements Serializable {
     float maxTemp;
 
     int humidity;
-    
+
     String type;
 
-    
     public Weather() {
 
     }
@@ -73,11 +75,11 @@ public class Weather implements Serializable {
     public int getHumidity() {
         return humidity;
     }
-    
+
     public String getType() {
         return type;
     }
-    
+
     public void setDate(Calendar date) {
         this.date = date;
     }
@@ -93,11 +95,11 @@ public class Weather implements Serializable {
     public void setHumidity(int humidity) {
         this.humidity = humidity;
     }
-    
+
     public void setType(String type) {
         this.type = type;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -120,6 +122,8 @@ public class Weather implements Serializable {
 
     @Override
     public String toString() {
-        return getProvider() + ":\nIndications: t=" + getMaxTemp() + " humidity=" + getHumidity() + "%\n";
+        DateFormat dF = new SimpleDateFormat("d MMM yyyy", Locale.ENGLISH);
+        String dateInString = dF.format(this.getDate().getTime());
+        return getProvider() + " (" + dateInString + "): ***** Indications: t=" + getMaxTemp() + " humidity=" + getHumidity() + "% " + "type of weather=" + getType() + "\n";
     }
 }

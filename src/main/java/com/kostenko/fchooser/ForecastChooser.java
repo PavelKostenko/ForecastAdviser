@@ -37,12 +37,14 @@ public class ForecastChooser {
         Weather w3 = parser.parseDocumentWEATHERCOUA(d3);
         Weather w4 = parser.parseDocumentYAHOO(d4);
         Weather actualWeather = parser.actualWeatherFromYAHOO();
-        
+      
         dBc.writeToDB(w1);
         dBc.writeToDB(w2);
         dBc.writeToDB(w3);
         dBc.writeToDB(w4);
         dBc.writeToDB(actualWeather);
+        
+//        dBc.test();
         
         dBc.analyse(3);
     }
