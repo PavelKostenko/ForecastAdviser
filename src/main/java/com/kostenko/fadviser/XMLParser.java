@@ -5,7 +5,7 @@
  */
 
 //checking commit
-package com.kostenko.fchooser;
+package com.kostenko.fadviser;
 
 import java.io.IOException;
 import java.io.OutputStream;

@@ -5,7 +5,7 @@
  */
 
 //testing changes 14:14
-package com.kostenko.fchooser;
+package com.kostenko.fadviser;
 
 /**
  *
