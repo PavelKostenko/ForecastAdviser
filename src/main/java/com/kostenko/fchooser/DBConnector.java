@@ -52,7 +52,7 @@ public class DBConnector {
         }
     }
     
-    public void analyse(int n){
+    public void analyse(int daysToAnalyze){
         int daysAnalyzed=0;
         
         float tempDiffOpenweather = 0;
@@ -64,7 +64,7 @@ public class DBConnector {
         float tempDiffYahoo = 0;
         float humidDiffYahoo = 0;
         
-        for(int i=0;i<n;i++){
+        for(int i=0;i<daysToAnalyze;i++){
             Calendar date = Calendar.getInstance();
             date.add(Calendar.DAY_OF_YEAR, -i);
             DateFormat dF = new SimpleDateFormat("d MMM yyyy", Locale.ENGLISH);

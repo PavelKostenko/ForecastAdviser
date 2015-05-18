@@ -5,8 +5,6 @@
  */
 package com.kostenko.fchooser;
 
-import org.w3c.dom.Document;
-
 /**
  *
  * @author Pavel
@@ -32,9 +30,11 @@ public class ForecastChooser {
         dBc.writeToDB(weatherFromWeathercoua);
         dBc.writeToDB(weatherFromYahoo);
         dBc.writeToDB(actualWeather);
-        
+  
+//        Printing all entries from DB
 //        dBc.test();
         
+//        We want to analyze last 3 days:
         dBc.analyse(3);
     }
 }
