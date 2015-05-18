@@ -20,7 +20,7 @@ import javax.persistence.Query;
  * @author Pavel
  */
 public class DBConnector {
-    EntityManagerFactory eMF = Persistence.createEntityManagerFactory("ForecastChooserPU");
+    EntityManagerFactory eMF = Persistence.createEntityManagerFactory("ForecastAdviserPU");
     EntityManager em = eMF.createEntityManager();
     
     public void writeToDB(Weather w){

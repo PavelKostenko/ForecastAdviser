@@ -9,7 +9,7 @@ package com.kostenko.fadviser;
  *
  * @author Pavel
  */
-public class ForecastChooser {
+public class ForecastAdviser {
 
     /**
      * @param args the command line arguments
