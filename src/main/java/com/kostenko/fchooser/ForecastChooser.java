@@ -19,12 +19,16 @@ public class ForecastChooser {
         XMLParser parser = new XMLParser();
         DBConnector dBc = new DBConnector();
         
+//        Get data about weather for tomorrow from all providers
         Weather weatherFromOpenweather = parser.parseDocumentOPENWEATHER();
         Weather weatherFromYandex = parser.parseDocumentYANDEX();
         Weather weatherFromWeathercoua = parser.parseDocumentWEATHERCOUA();
         Weather weatherFromYahoo = parser.parseDocumentYAHOO();
+        
+//        Get actual data for today
         Weather actualWeather = parser.actualWeatherFromYAHOO();
       
+//        Persist the data in DB:
         dBc.writeToDB(weatherFromOpenweather);
         dBc.writeToDB(weatherFromYandex);
         dBc.writeToDB(weatherFromWeathercoua);
