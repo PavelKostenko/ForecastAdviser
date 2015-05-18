@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -41,8 +40,15 @@ import org.xml.sax.SAXException;
  */
 public class XMLParser {
 
-    Document doc = null;
+    private Document doc = null;
+    private final String OPENWEATHER_XML = "http://api.openweathermap.org/data/2.5/forecast/daily?q=Tbilisi&mode=xml&units=metric&cnt=7";
+    private final String YANDEX_XML = "http://export.yandex.ru/weather-ng/forecasts/37549.xml";
+    private final String WEATHERCOUA_XML = "http://xml.weather.co.ua/1.2/forecast/53137?dayf=5&userid=YourSite_com&lang=uk";
+    private final String YAHOO_XML = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22Tbilisi%22)&format=xml&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
 
+// The weather from BBC is not used. But link is noted for future implementation.
+//    private final String BBC_XML = "http://open.live.bbc.co.uk/weather/feeds/en/611717/3dayforecast.rss";
+    
     public Document getDocumentFromXML(String l) {
         try {
             URL forecastURL = new URL(l);
@@ -55,7 +61,10 @@ public class XMLParser {
         return doc;
     }
 
-    public Weather parseDocumentOPENWEATHER(Node n) {
+    public Weather parseDocumentOPENWEATHER() {
+        
+        Node n = getDocumentFromXML(OPENWEATHER_XML);
+        
         float maxTempValue = -1000;
         int humid = 1000;
         
@@ -95,7 +104,10 @@ public class XMLParser {
         return today;
     }
 
-    public Weather parseDocumentYANDEX(Node n) {
+    public Weather parseDocumentYANDEX() {
+        
+        Node n = getDocumentFromXML(YANDEX_XML);
+        
         float maxTempValue = -1000;
         float minTempValue = 1000;
         int dayHumid = -1000;
@@ -154,7 +166,10 @@ public class XMLParser {
         return today;
     }
 
-    public Weather parseDocumentWEATHERCOUA(Node n) {
+    public Weather parseDocumentWEATHERCOUA() {
+        
+        Node n = getDocumentFromXML(WEATHERCOUA_XML);
+        
         float minTempValue = 1000;
         float maxTempValue = -1000;
         int minHumid = 1000;
@@ -224,7 +239,10 @@ public class XMLParser {
         return today;
     }
 
-    public Weather parseDocumentYAHOO(Node n) {
+    public Weather parseDocumentYAHOO() {
+        
+        Node n = getDocumentFromXML(YAHOO_XML);
+        
         float maxTempValue = -1000;
         int humid = 1000;
         
