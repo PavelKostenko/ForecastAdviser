@@ -48,7 +48,7 @@ public class XMLParser {
     private final String WEATHERCOUA_XML = "http://xml.weather.co.ua/1.2/forecast/53137?dayf=5&userid=YourSite_com&lang=uk";
     private final String YAHOO_XML = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22Tbilisi%22)&format=xml&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
     public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-    
+
 // The weather from BBC is not used. But link is noted for future implementation.
 //    private final String BBC_XML = "http://open.live.bbc.co.uk/weather/feeds/en/611717/3dayforecast.rss";
     public Document getDocumentFromXML(String l) {
@@ -62,26 +62,26 @@ public class XMLParser {
         }
         return doc;
     }
-    
+
     public Weather parseDocumentOPENWEATHER() {
 
         Node n = getDocumentFromXML(OPENWEATHER_XML);
 
         float maxTempValue = -1000;
         int humid = 1000;
-        
-        Node weatherdata = getSubnode(n,"weatherdata");
+
+        Node weatherdata = getSubnode(n, "weatherdata");
         Node forecast = getSubnode(weatherdata, "forecast");
         Node time = getSubnodes(forecast, "time")
-            .stream()
-            .filter(node -> getAttribute(node,"day")
-            .equals(SIMPLE_DATE_FORMAT.format(getTomorrow())))
-            .findAny().get();
-        
-        Node temperature = getSubnode(time,"temperature");
+                .stream()
+                .filter(node -> getAttribute(node, "day")
+                        .equals(SIMPLE_DATE_FORMAT.format(getTomorrow())))
+                .findAny().get();
+
+        Node temperature = getSubnode(time, "temperature");
         maxTempValue = Float.parseFloat(getAttribute(temperature, "max"));
-        
-        Node humidity = getSubnode(time,"humidity");
+
+        Node humidity = getSubnode(time, "humidity");
         humid = Integer.parseInt(getAttribute(humidity, "value"));
 
         Calendar cal = Calendar.getInstance();
@@ -101,18 +101,20 @@ public class XMLParser {
         }
         return resultNode;
     }
-    
+
     private List<Node> getSubnodes(Node node, String name) {
         NodeList nodeList = node.getChildNodes();
         List<Node> result = new ArrayList<>();
-        for (int i=0; i < nodeList.getLength(); i++) {
+        for (int i = 0; i < nodeList.getLength(); i++) {
             final Node currentNode = nodeList.item(i);
             if (name.equals(currentNode.getNodeName())) {
                 result.add(currentNode);
             }
         }
         return result;
-    };
+    }
+
+    ;
 
     public Weather parseDocumentYANDEX() {
 
@@ -122,39 +124,39 @@ public class XMLParser {
         float minTempValue = 1000;
         int dayHumid = -1000;
         int nightHumid = -1000;
-        
-        Node forecast = getSubnode(n,"forecast");
-        
-        Node day = getSubnodes(forecast,"day")
-            .stream()
-            .filter(node -> getAttribute(node,"date")
-            .equals(SIMPLE_DATE_FORMAT.format(getTomorrow())))
-            .findAny().get();
-        
-        Node daypartDay = getSubnodes(day,"day_part")
-            .stream()
-            .filter(node -> getAttribute(node,"type")
-            .equals("day_short"))
-            .findAny().get();
-        
-        Node temperatureDayshort = getSubnode(daypartDay,"temperature");
+
+        Node forecast = getSubnode(n, "forecast");
+
+        Node day = getSubnodes(forecast, "day")
+                .stream()
+                .filter(node -> getAttribute(node, "date")
+                        .equals(SIMPLE_DATE_FORMAT.format(getTomorrow())))
+                .findAny().get();
+
+        Node daypartDay = getSubnodes(day, "day_part")
+                .stream()
+                .filter(node -> getAttribute(node, "type")
+                        .equals("day_short"))
+                .findAny().get();
+
+        Node temperatureDayshort = getSubnode(daypartDay, "temperature");
         maxTempValue = Float.parseFloat(temperatureDayshort.getFirstChild().getNodeValue());
-        
-        Node humidityDayshort = getSubnode(daypartDay,"humidity");
+
+        Node humidityDayshort = getSubnode(daypartDay, "humidity");
         dayHumid = Integer.parseInt(humidityDayshort.getFirstChild().getNodeValue());
-        
-        Node daypartNight = getSubnodes(day,"day_part")
-            .stream()
-            .filter(node -> getAttribute(node,"type")
-            .equals("night_short"))
-            .findAny().get();
-        
-        Node temperatureNightshort = getSubnode(daypartNight,"temperature");
+
+        Node daypartNight = getSubnodes(day, "day_part")
+                .stream()
+                .filter(node -> getAttribute(node, "type")
+                        .equals("night_short"))
+                .findAny().get();
+
+        Node temperatureNightshort = getSubnode(daypartNight, "temperature");
         minTempValue = Float.parseFloat(temperatureNightshort.getFirstChild().getNodeValue());
-        
-        Node humidityNightshort = getSubnode(daypartNight,"humidity");
+
+        Node humidityNightshort = getSubnode(daypartNight, "humidity");
         nightHumid = Integer.parseInt(humidityNightshort.getFirstChild().getNodeValue());
-        
+
         if (minTempValue > maxTempValue) {
             minTempValue += maxTempValue;
             maxTempValue = minTempValue - maxTempValue;
@@ -165,104 +167,55 @@ public class XMLParser {
         Weather today = new Weather("YANDEX", cal, maxTempValue, humid, "1dayforecast");
         return today;
     }
-    
+
     public Weather parseDocumentWEATHERCOUA() {
 
         Node n = getDocumentFromXML(WEATHERCOUA_XML);
 
-        float minTempValue = 1000;
         float maxTempValue = -1000;
         int minHumid = 1000;
         int maxHumid = -1000;
 
-        Node forecastRoot = getSubnode(n,"forecast");
-        
-        Node forecastSub = getSubnode(forecastRoot,"forecast");
-        
-        List <Node> dayList = getSubnodes(forecastSub,"day")
-            .stream()
-            .filter(node -> getAttribute(node,"date")
-            .equals(SIMPLE_DATE_FORMAT.format(getTomorrow())))
-            .collect(Collectors.toList());
-        
-        for (Node day: dayList){
-            Node t = getSubnode(day,"t");
+        Node forecastRoot = getSubnode(n, "forecast");
 
-                Node min = getSubnode(t,"min");
-                float localMin = Float.parseFloat(min.getFirstChild().getNodeValue());
-                if (minTempValue > localMin) {
-                    minTempValue = localMin;
-                }
+        Node forecastSub = getSubnode(forecastRoot, "forecast");
 
-                Node max = getSubnode(t,"max");
-                float localMax = Float.parseFloat(max.getFirstChild().getNodeValue());
-                if (maxTempValue < localMax) {
-                    maxTempValue = localMax;
-                }
+        List<Node> dayList = getSubnodes(forecastSub, "day")
+                .stream()
+                .filter(node -> getAttribute(node, "date")
+                        .equals(SIMPLE_DATE_FORMAT.format(getTomorrow())))
+                .collect(Collectors.toList());
 
-            Node hmid = getSubnode(day,"hmid");
+        for (Node day : dayList) {
+            Node t = getSubnode(day, "t");
 
-                Node minH = getSubnode(hmid,"min");
-                int localMinHumid = Integer.parseInt(minH.getFirstChild().getNodeValue());
-                if (minHumid > localMinHumid) {
-                    minHumid = localMinHumid;
-                }
+            Node max = getSubnode(t, "max");
+            float localMax = Float.parseFloat(max.getFirstChild().getNodeValue());
+            if (maxTempValue < localMax) {
+                maxTempValue = localMax;
+            }
 
-                Node maxH = getSubnode(hmid,"max");
-                int localMaxHumid = Integer.parseInt(maxH.getFirstChild().getNodeValue());
-                if (maxHumid < localMaxHumid) {
-                    maxHumid = localMaxHumid;
-                }
-        }    
+            Node hmid = getSubnode(day, "hmid");
+
+            Node minH = getSubnode(hmid, "min");
+            int localMinHumid = Integer.parseInt(minH.getFirstChild().getNodeValue());
+            if (minHumid > localMinHumid) {
+                minHumid = localMinHumid;
+            }
+
+            Node maxH = getSubnode(hmid, "max");
+            int localMaxHumid = Integer.parseInt(maxH.getFirstChild().getNodeValue());
+            if (maxHumid < localMaxHumid) {
+                maxHumid = localMaxHumid;
+            }
+        }
         int humid = (minHumid + maxHumid) / 2;
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DAY_OF_YEAR, 1);
         Weather today = new Weather("WEATHERCOUA", cal, maxTempValue, humid, "1dayforecast");
         return today;
     }
-    
-    public Weather parseDocumentYAHOOtest() {
 
-        Node n = getDocumentFromXML(YAHOO_XML);
-
-        float maxTempValue = -1000;
-        int humid = 1000;
-
-        Node rootNode = rootNodeList.item(0);
-        NodeList subListLevel1 = rootNode.getChildNodes();
-        for (int i = 0; i < subListLevel1.getLength(); i++) {
-            Node subNodeLevel1 = subListLevel1.item(i);
-            if ("results".equals(subNodeLevel1.getNodeName())) {
-                NodeList subListLevel2 = subNodeLevel1.getChildNodes();
-                for (int j = 0; j < subListLevel2.getLength(); j++) {
-                    Node subNodeLevel2 = subListLevel2.item(j);
-                    if ("channel".equals(subNodeLevel2.getNodeName())) {
-                        NodeList subListLevel3 = subNodeLevel2.getChildNodes();
-                        for (int k = 0; k < subListLevel3.getLength(); k++) {
-                            Node subNodeLevel3 = subListLevel3.item(k);
-                            if ("item".equals(subNodeLevel3.getNodeName())) {
-                                NodeList subListLevel4 = subNodeLevel3.getChildNodes();
-                                for (int l = 0; l < subListLevel4.getLength(); l++) {
-                                    Node subNodeLevel4 = subListLevel4.item(l);
-                                    if ("yweather:forecast".equals(subNodeLevel4.getNodeName())) {
-                                        if (getAttribute(subNodeLevel4, "date").equals(tomorrowsDateInStringForYahoo(getTomorrow()))) {
-                                            maxTempValue = Float.parseFloat(getAttribute(subNodeLevel4, "high"));
-                                            maxTempValue = fahrenheitToCelsius(maxTempValue);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DAY_OF_YEAR, 1);
-        Weather today = new Weather("YAHOO", cal, maxTempValue, humid, "1dayforecast");
-        return today;
-    }
-    
     public Weather parseDocumentYAHOO() {
 
         Node n = getDocumentFromXML(YAHOO_XML);
@@ -270,36 +223,23 @@ public class XMLParser {
         float maxTempValue = -1000;
         int humid = 1000;
 
-        NodeList rootNodeList = n.getChildNodes();
-        Node rootNode = rootNodeList.item(0);
-        NodeList subListLevel1 = rootNode.getChildNodes();
-        for (int i = 0; i < subListLevel1.getLength(); i++) {
-            Node subNodeLevel1 = subListLevel1.item(i);
-            if ("results".equals(subNodeLevel1.getNodeName())) {
-                NodeList subListLevel2 = subNodeLevel1.getChildNodes();
-                for (int j = 0; j < subListLevel2.getLength(); j++) {
-                    Node subNodeLevel2 = subListLevel2.item(j);
-                    if ("channel".equals(subNodeLevel2.getNodeName())) {
-                        NodeList subListLevel3 = subNodeLevel2.getChildNodes();
-                        for (int k = 0; k < subListLevel3.getLength(); k++) {
-                            Node subNodeLevel3 = subListLevel3.item(k);
-                            if ("item".equals(subNodeLevel3.getNodeName())) {
-                                NodeList subListLevel4 = subNodeLevel3.getChildNodes();
-                                for (int l = 0; l < subListLevel4.getLength(); l++) {
-                                    Node subNodeLevel4 = subListLevel4.item(l);
-                                    if ("yweather:forecast".equals(subNodeLevel4.getNodeName())) {
-                                        if (getAttribute(subNodeLevel4, "date").equals(tomorrowsDateInStringForYahoo(getTomorrow()))) {
-                                            maxTempValue = Float.parseFloat(getAttribute(subNodeLevel4, "high"));
-                                            maxTempValue = fahrenheitToCelsius(maxTempValue);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        Node query = getSubnode(n, "query");
+
+        Node results = getSubnode(query, "results");
+
+        Node channel = getSubnode(results, "channel");
+
+        Node item = getSubnode(channel, "item");
+
+        Node yweather = getSubnodes(item, "yweather:forecast")
+                .stream()
+                .filter(node -> getAttribute(node, "date")
+                        .equals(tomorrowsDateInStringForYahoo(getTomorrow())))
+                .findAny().get();
+
+        maxTempValue = Float.parseFloat(getAttribute(yweather, "high"));
+        maxTempValue = fahrenheitToCelsius(maxTempValue);
+
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DAY_OF_YEAR, 1);
         Weather today = new Weather("YAHOO", cal, maxTempValue, humid, "1dayforecast");
@@ -312,37 +252,24 @@ public class XMLParser {
         float actualMaxTemp = -1000;
         int actualHumid = 1000;
 
-        NodeList rootNodeList = n.getChildNodes();
-        Node rootNode = rootNodeList.item(0);
-        NodeList subListLevel1 = rootNode.getChildNodes();
-        for (int i = 0; i < subListLevel1.getLength(); i++) {
-            Node subNodeLevel1 = subListLevel1.item(i);
-            if ("results".equals(subNodeLevel1.getNodeName())) {
-                NodeList subListLevel2 = subNodeLevel1.getChildNodes();
-                for (int j = 0; j < subListLevel2.getLength(); j++) {
-                    Node subNodeLevel2 = subListLevel2.item(j);
-                    if ("channel".equals(subNodeLevel2.getNodeName())) {
-                        NodeList subListLevel3 = subNodeLevel2.getChildNodes();
-                        for (int k = 0; k < subListLevel3.getLength(); k++) {
-                            Node subNodeLevel3 = subListLevel3.item(k);
-                            if ("item".equals(subNodeLevel3.getNodeName())) {
-                                NodeList subListLevel4 = subNodeLevel3.getChildNodes();
-                                for (int l = 0; l < subListLevel4.getLength(); l++) {
-                                    Node subNodeLevel4 = subListLevel4.item(l);
-                                    if ("yweather:condition".equals(subNodeLevel4.getNodeName())) {
-                                        actualMaxTemp = Float.parseFloat(getAttribute(subNodeLevel4, "temp"));
-                                        actualMaxTemp = fahrenheitToCelsius(actualMaxTemp);
-                                    }
-                                }
-                            } else if ("yweather:atmosphere".equals(subNodeLevel3.getNodeName())) {
-                                actualHumid = Integer.parseInt(getAttribute(subNodeLevel3, "humidity"));
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        Node query = getSubnode(n, "query");
+
+        Node results = getSubnode(query, "results");
+
+        Node channel = getSubnode(results, "channel");
+
+        Node yweatherAtmosphere = getSubnode(channel, "yweather:atmosphere");
+        actualHumid = Integer.parseInt(getAttribute(yweatherAtmosphere, "humidity"));
+
+        Node item = getSubnode(channel, "item");
+
+        Node yweatherCondition = getSubnode(item, "yweather:condition");
+
+        actualMaxTemp = Float.parseFloat(getAttribute(yweatherCondition, "temp"));
+        actualMaxTemp = fahrenheitToCelsius(actualMaxTemp);
+
         Weather today = new Weather("YAHOO", Calendar.getInstance(), actualMaxTemp, actualHumid, "actual");
+
         return today;
     }
 
