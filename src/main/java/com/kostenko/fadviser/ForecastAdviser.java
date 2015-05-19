@@ -22,24 +22,28 @@ public class ForecastAdviser {
         
 //        Get data about weather for tomorrow from all providers
         Weather weatherFromOpenweather = parser.parseDocumentOPENWEATHER();
+        
         Weather weatherFromYandex = parser.parseDocumentYANDEX();
+        
         Weather weatherFromWeathercoua = parser.parseDocumentWEATHERCOUA();
+        parser.parseDocumentWEATHERCOUAtest();
+        
         Weather weatherFromYahoo = parser.parseDocumentYAHOO();
         
 //        Get actual data for today
         Weather actualWeather = parser.actualWeatherFromYAHOO();
       
 //        Persist the data in DB:
-        dBc.writeToDB(weatherFromOpenweather);
-        dBc.writeToDB(weatherFromYandex);
-        dBc.writeToDB(weatherFromWeathercoua);
-        dBc.writeToDB(weatherFromYahoo);
-        dBc.writeToDB(actualWeather);
+//        dBc.writeToDB(weatherFromOpenweather);
+//        dBc.writeToDB(weatherFromYandex);
+//        dBc.writeToDB(weatherFromWeathercoua);
+//        dBc.writeToDB(weatherFromYahoo);
+//        dBc.writeToDB(actualWeather);
   
 //        Printing all entries from DB
 //        test.showAllWeather();
         
 //        We want to analyze last 3 days:
-        dBc.analyse(3);
+//        dBc.analyse(3);
     }
 }
