@@ -191,9 +191,8 @@ public class XMLParser {
 
             Node max = getSubnode(t, "max");
             float localMax = Float.parseFloat(max.getFirstChild().getNodeValue());
-            if (maxTempValue < localMax) {
-                maxTempValue = localMax;
-            }
+
+            maxTempValue = (maxTempValue < localMax) ? localMax : maxTempValue;
 
             Node hmid = getSubnode(day, "hmid");
 
