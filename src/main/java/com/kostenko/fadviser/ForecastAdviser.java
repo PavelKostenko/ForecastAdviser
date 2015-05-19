@@ -18,6 +18,7 @@ public class ForecastAdviser {
 
         XMLParser parser = new XMLParser();
         DBConnector dBc = new DBConnector();
+        Test test = new Test();
         
 //        Get data about weather for tomorrow from all providers
         Weather weatherFromOpenweather = parser.parseDocumentOPENWEATHER();
@@ -36,7 +37,6 @@ public class ForecastAdviser {
         dBc.writeToDB(actualWeather);
   
 //        Printing all entries from DB
-//        Test test = new Test();
 //        test.showAllWeather();
         
 //        We want to analyze last 3 days:
