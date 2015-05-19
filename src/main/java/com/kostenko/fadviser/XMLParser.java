@@ -185,6 +185,11 @@ public class XMLParser {
                     Node subNodeLevel2 = subListLevel2.item(j);
                     if ("day".equals(subNodeLevel2.getNodeName())) {
                         DateFormat formatOPENWEATHER = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+//                        
+                        System.out.println("Problematic value");
+                        System.out.println(subNodeLevel2.getNodeName());
+                        System.out.println("");
+//                        
                         String s1 = getAttribute(subNodeLevel2,"date");
                         String s2 = formatOPENWEATHER.format(getTomorrow());
                         if (s1.equals(s2)){
@@ -323,7 +328,14 @@ public class XMLParser {
     }
     
     private String getAttribute(Node x, String attribute) {
-        return x.getAttributes().getNamedItem(attribute).getNodeValue();
+        String str = "-1000";
+        try {
+            str = x.getAttributes().getNamedItem(attribute).getNodeValue();
+        } catch(NullPointerException e) {
+            System.out.println("There are no such attribute for the node in this fiile");
+        } finally {
+            return str;
+        }
     }
 
     public static void printDocument(Document doc, OutputStream out) throws IOException, TransformerException {
