@@ -36,7 +36,8 @@ public class ForecastAdviser {
         dBc.writeToDB(actualWeather);
   
 //        Printing all entries from DB
-//        dBc.test();
+//        Test test = new Test();
+//        test.showAllWeather();
         
 //        We want to analyze last 3 days:
         dBc.analyse(3);

@@ -147,13 +147,4 @@ public class DBConnector {
         float multi = (float)Math.pow(10, n);
         return Math.round(f*multi)/multi;
     }
-    
-    public void test(){
-            
-        Query query3 = em.createQuery("SELECT e FROM Weather as e");
-        List <Weather> list3 = query3.getResultList();
-        for(Weather l:list3){
-            System.out.println(l);
-        }
-    }
 }
