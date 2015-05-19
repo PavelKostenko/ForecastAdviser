@@ -273,14 +273,12 @@ public class XMLParser {
     }
 
     private String getAttribute(Node x, String attribute) {
-        String str = "-1000";
         try {
-            str = x.getAttributes().getNamedItem(attribute).getNodeValue();
+            return x.getAttributes().getNamedItem(attribute).getNodeValue();
         } catch (NullPointerException e) {
             System.out.println("There are no attribute: " + attribute + " in the node: " + x.getNodeName());
-        } finally {
-            return str;
-        }
+            return "-1000";
+        } 
     }
 
     public static void printDocument(Document doc, OutputStream out) throws IOException, TransformerException {
