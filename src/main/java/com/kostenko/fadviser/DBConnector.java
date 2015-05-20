@@ -24,7 +24,10 @@ public class DBConnector {
     EntityManager em = eMF.createEntityManager();
     
     public void writeToDB(Weather w){
-        Query query = em.createQuery("SELECT e FROM Weather AS e WHERE e.date=:d and e.type=:t and e.provider=:p").setParameter("d",w.getDate()).setParameter("t",w.getType()).setParameter("p", w.getProvider());
+        Query query = em.createQuery("SELECT e FROM Weather AS e WHERE e.date=:d and e.type=:t and e.provider=:p")
+                .setParameter("d",w.getDate())
+                .setParameter("t",w.getType())
+                .setParameter("p", w.getProvider());
         List <Weather> list = query.getResultList();
         try {
             em.getTransaction().begin();
@@ -75,17 +78,26 @@ public class DBConnector {
             float futureTemp;
             float futureHumidity;
             
-            Query query = em.createQuery("SELECT e FROM Weather AS e WHERE e.date=:d and e.type=:t").setParameter("d",date).setParameter("t", "actual");
+            Query query = em.createQuery("SELECT e FROM Weather AS e WHERE e.date=:d and e.type=:t")
+                    .setParameter("d",date)
+                    .setParameter("t", "actual");
             List <Weather> list = query.getResultList();
             if (list.isEmpty()){
                 System.out.println("No actual weather records for " + todayInString);
             } else {
-                actualTemp = list.get(0).getMaxTemp();
-                actualHumidity = list.get(0).getHumidity();
+                final Weather actualWeather = list.get(0);
+                actualTemp = actualWeather.getMaxTemp();
+                actualHumidity = actualWeather.getHumidity();
                 System.out.println("");
-                System.out.println(list.get(0).provider + " actual data for " + todayInString + " " + roundFloat(actualTemp,1) + "C " + actualHumidity + "%");
+                System.out.println(String.format("%s actual data for %s %.1fC %.1f%%",
+                        actualWeather.provider,
+                        todayInString,
+                        roundFloat(actualTemp,1),
+                        actualHumidity));
                 System.out.println("");
-                Query query2 = em.createQuery("SELECT e FROM Weather AS e WHERE e.date=:d and e.type=:t").setParameter("d",date).setParameter("t", "1dayforecast");
+                Query query2 = em.createQuery("SELECT e FROM Weather AS e WHERE e.date=:d and e.type=:t")
+                        .setParameter("d",date)
+                        .setParameter("t", "1dayforecast");
                 List <Weather> list2 = query2.getResultList();
                 if (list2.size()==4){
                     daysAnalyzed++;
@@ -97,7 +109,13 @@ public class DBConnector {
                         
                         float diffTemp = Math.abs(actualTemp-futureTemp);
                         float diffHumid = Math.abs(actualHumidity - futureHumidity);
-                        System.out.println(provider + " forecast for " + todayInString + " " + futureTemp + "C " + futureHumidity + "%. Difference is: " + roundFloat(diffTemp,1) + "C " + diffHumid + "%.");
+                        System.out.println(String.format("%s forecast for %s %.1fC %.1f%%. Difference is: %.1fC %.1f%%.",
+                                provider,
+                                todayInString,
+                                futureTemp,
+                                futureHumidity,
+                                roundFloat(diffTemp,1),
+                                diffHumid));
                         switch (w.provider){
                             case "OPENWEATHER":
                                 tempDiffOpenweather = tempDiffOpenweather+diffTemp;

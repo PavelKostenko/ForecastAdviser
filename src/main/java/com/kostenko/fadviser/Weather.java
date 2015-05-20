@@ -124,6 +124,12 @@ public class Weather implements Serializable {
     public String toString() {
         DateFormat dF = new SimpleDateFormat("d MMM yyyy", Locale.ENGLISH);
         String dateInString = dF.format(this.getDate().getTime());
-        return getProvider() + " (" + dateInString + "): ***** [TEMP=" + getMaxTemp() + "] [HUMIDITY=" + getHumidity() + "%] [TYPE=" + getType() + "]\n";
+        String result = String.format("%s (%s): ***** [TEMP=%.1f] [HUMIDITY=%d%%] [TYPE=%s]\n",
+                getProvider(),
+                dateInString,
+                getMaxTemp(),
+                getHumidity(),
+                getType());
+        return result;
     }
 }

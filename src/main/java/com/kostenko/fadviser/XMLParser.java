@@ -42,16 +42,20 @@ import org.xml.sax.SAXException;
  */
 public class XMLParser {
 
-    private Document doc = null;
     private final String OPENWEATHER_XML = "http://api.openweathermap.org/data/2.5/forecast/daily?q=Tbilisi&mode=xml&units=metric&cnt=7";
     private final String YANDEX_XML = "http://export.yandex.ru/weather-ng/forecasts/37549.xml";
     private final String WEATHERCOUA_XML = "http://xml.weather.co.ua/1.2/forecast/53137?dayf=5&userid=YourSite_com&lang=uk";
     private final String YAHOO_XML = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22Tbilisi%22)&format=xml&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
-    public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+    private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+    private static final int MAX_INIT_TEMP = -1000;
+    private static final int MIN_INIT_TEMP = 1000;
+    private static final int MAX_INIT_HUMID = -1000;
+    private static final int MIN_INIT_HUMID = 1000;
 
 // The weather from BBC is not used. But link is noted for future implementation.
 //    private final String BBC_XML = "http://open.live.bbc.co.uk/weather/feeds/en/611717/3dayforecast.rss";
     public Document getDocumentFromXML(String l) {
+        Document doc = null;
         try {
             URL forecastURL = new URL(l);
             HttpURLConnection conn = (HttpURLConnection) forecastURL.openConnection();
@@ -67,8 +71,8 @@ public class XMLParser {
 
         Node n = getDocumentFromXML(OPENWEATHER_XML);
 
-        float maxTempValue = -1000;
-        int humid = 1000;
+        float maxTempValue = MAX_INIT_TEMP;
+        int humid = MAX_INIT_TEMP;
 
         Node weatherdata = getSubnode(n, "weatherdata");
         Node forecast = getSubnode(weatherdata, "forecast");
@@ -90,40 +94,14 @@ public class XMLParser {
         return today;
     }
 
-    private Node getSubnode(Node parentNode, String subnodeName) {
-        Node resultNode = null;
-        NodeList subList = parentNode.getChildNodes();
-        for (int i = 0; i < subList.getLength(); i++) {
-            Node subNode = subList.item(i);
-            if (subnodeName.equals(subNode.getNodeName())) {
-                resultNode = subNode;
-            }
-        }
-        return resultNode;
-    }
-
-    private List<Node> getSubnodes(Node node, String name) {
-        NodeList nodeList = node.getChildNodes();
-        List<Node> result = new ArrayList<>();
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            final Node currentNode = nodeList.item(i);
-            if (name.equals(currentNode.getNodeName())) {
-                result.add(currentNode);
-            }
-        }
-        return result;
-    }
-
-    ;
-
     public Weather parseDocumentYANDEX() {
 
         Node n = getDocumentFromXML(YANDEX_XML);
 
-        float maxTempValue = -1000;
-        float minTempValue = 1000;
-        int dayHumid = -1000;
-        int nightHumid = -1000;
+        float maxTempValue = MAX_INIT_TEMP;
+        float minTempValue = MIN_INIT_TEMP;
+        int dayHumid = MAX_INIT_HUMID;
+        int nightHumid = MIN_INIT_HUMID;
 
         Node forecast = getSubnode(n, "forecast");
 
@@ -172,9 +150,9 @@ public class XMLParser {
 
         Node n = getDocumentFromXML(WEATHERCOUA_XML);
 
-        float maxTempValue = -1000;
-        int minHumid = 1000;
-        int maxHumid = -1000;
+        float maxTempValue = MAX_INIT_TEMP;
+        int minHumid = MIN_INIT_HUMID;
+        int maxHumid = MAX_INIT_HUMID;
 
         Node forecastRoot = getSubnode(n, "forecast");
 
@@ -214,8 +192,8 @@ public class XMLParser {
 
         Node n = getDocumentFromXML(YAHOO_XML);
 
-        float maxTempValue = -1000;
-        int humid = 1000;
+        float maxTempValue = MAX_INIT_TEMP;
+        int humid = MAX_INIT_HUMID;
 
         Node query = getSubnode(n, "query");
 
@@ -243,8 +221,8 @@ public class XMLParser {
     public Weather actualWeatherFromYAHOO() {
         String link = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22Tbilisi%22)&format=xml&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
         Document n = getDocumentFromXML(link);
-        float actualMaxTemp = -1000;
-        int actualHumid = 1000;
+        float actualMaxTemp = MAX_INIT_TEMP;
+        int actualHumid = MAX_INIT_HUMID;
 
         Node query = getSubnode(n, "query");
 
@@ -263,15 +241,40 @@ public class XMLParser {
         actualMaxTemp = fahrenheitToCelsius(actualMaxTemp);
 
         Weather today = new Weather("YAHOO", Calendar.getInstance(), actualMaxTemp, actualHumid, "actual");
-
+        System.out.println(today);
         return today;
+    }
+
+    private Node getSubnode(Node parentNode, String subnodeName) {
+        NodeList subList = parentNode.getChildNodes();
+        for (int i = 0; i < subList.getLength(); i++) {
+            Node subNode = subList.item(i);
+            if (subnodeName.equals(subNode.getNodeName())) {
+                return subNode;
+            }
+        }
+        throw new RuntimeException("Node not found");
+    }
+
+    private List<Node> getSubnodes(Node node, String name) {
+        NodeList nodeList = node.getChildNodes();
+        List<Node> result = new ArrayList<>();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            final Node currentNode = nodeList.item(i);
+            if (name.equals(currentNode.getNodeName())) {
+                result.add(currentNode);
+            }
+        }
+        return result;
     }
 
     private String getAttribute(Node x, String attribute) {
         try {
             return x.getAttributes().getNamedItem(attribute).getNodeValue();
         } catch (NullPointerException e) {
-            System.out.println("There are no attribute: " + attribute + " in the node: " + x.getNodeName());
+            System.out.println(String.format("There are no attribute: %s in the node: %s",
+                    attribute,
+                    x.getNodeName()));
             return "-1000";
         }
     }
