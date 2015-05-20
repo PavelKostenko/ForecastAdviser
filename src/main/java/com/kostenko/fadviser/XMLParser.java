@@ -180,33 +180,28 @@ public class XMLParser {
 
         Node forecastSub = getSubnode(forecastRoot, "forecast");
 
-        List<Node> dayList = getSubnodes(forecastSub, "day")
+        List<Node> days = getSubnodes(forecastSub, "day")
                 .stream()
                 .filter(node -> getAttribute(node, "date")
                         .equals(SIMPLE_DATE_FORMAT.format(getTomorrow())))
                 .collect(Collectors.toList());
 
-        for (Node day : dayList) {
+        for (Node day : days) {
             Node t = getSubnode(day, "t");
 
             Node max = getSubnode(t, "max");
             float localMax = Float.parseFloat(max.getFirstChild().getNodeValue());
-
             maxTempValue = (maxTempValue < localMax) ? localMax : maxTempValue;
 
             Node hmid = getSubnode(day, "hmid");
 
             Node minH = getSubnode(hmid, "min");
             int localMinHumid = Integer.parseInt(minH.getFirstChild().getNodeValue());
-            if (minHumid > localMinHumid) {
-                minHumid = localMinHumid;
-            }
+            minHumid = (minHumid > localMinHumid) ? localMinHumid : minHumid;
 
             Node maxH = getSubnode(hmid, "max");
             int localMaxHumid = Integer.parseInt(maxH.getFirstChild().getNodeValue());
-            if (maxHumid < localMaxHumid) {
-                maxHumid = localMaxHumid;
-            }
+            maxHumid = (maxHumid < localMaxHumid) ? localMaxHumid : maxHumid;
         }
         int humid = (minHumid + maxHumid) / 2;
         Calendar cal = Calendar.getInstance();
@@ -278,7 +273,7 @@ public class XMLParser {
         } catch (NullPointerException e) {
             System.out.println("There are no attribute: " + attribute + " in the node: " + x.getNodeName());
             return "-1000";
-        } 
+        }
     }
 
     public static void printDocument(Document doc, OutputStream out) throws IOException, TransformerException {
@@ -296,11 +291,8 @@ public class XMLParser {
 
     private Date getTomorrow() {
         Calendar calendar = Calendar.getInstance();
-        Date today = calendar.getTime();
-
         calendar.add(Calendar.DAY_OF_YEAR, 1);
         Date tomorrow = calendar.getTime();
-
         return tomorrow;
     }
 
