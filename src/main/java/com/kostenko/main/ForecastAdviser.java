@@ -6,7 +6,6 @@
 package com.kostenko.main;
 
 import com.kostenko.db.DBConnector;
-import com.kostenko.test.Test;
 import com.kostenko.db.Weather;
 import com.kostenko.parsers.WeathercouaParser;
 import com.kostenko.parsers.WeatherParser;
@@ -26,7 +25,6 @@ public class ForecastAdviser {
     public static void main(String[] args) {
 
         DBConnector dBConnector = new DBConnector();
-//        Test test = new Test();
         
 //        Get data about weather for tomorrow from all providers
         Weather openweatherForecast = new OpenweatherParser().getFutureWeather();
@@ -44,9 +42,6 @@ public class ForecastAdviser {
         dBConnector.writeToDB(yahooForecast);
         dBConnector.writeToDB(actualWeather);
   
-//        Printing all entries from DB
-//        test.showAllWeather();
-        
 //        We want to analyze last 3 days:
         dBConnector.analyse(3);
     }
