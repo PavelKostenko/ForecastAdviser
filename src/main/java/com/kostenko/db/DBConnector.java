@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.kostenko.fadviser;
+package com.kostenko.db;
 
+import com.kostenko.db.Weather;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -90,7 +91,7 @@ public class DBConnector {
                 actualHumidity = actualWeather.getHumidity();
                 System.out.println("");
                 System.out.println(String.format("%s actual data for %s %.1fC %.1f%%",
-                        actualWeather.provider,
+                        actualWeather.getProvider(),
                         todayInString,
                         roundFloat(actualTemp,1),
                         actualHumidity));
@@ -116,7 +117,7 @@ public class DBConnector {
                                 futureHumidity,
                                 roundFloat(diffTemp,1),
                                 diffHumid));
-                        switch (w.provider){
+                        switch (w.getProvider()){
                             case "OPENWEATHER":
                                 tempDiffOpenweather = tempDiffOpenweather+diffTemp;
                                 humidDiffOpenweather = humidDiffOpenweather+diffHumid;

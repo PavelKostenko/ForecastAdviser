@@ -4,8 +4,9 @@
  * and open the template in the editor.
  */
 //testing changes 14:14
-package com.kostenko.fadviser;
+package com.kostenko.test;
 
+import com.kostenko.db.Weather;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
