@@ -17,7 +17,7 @@ public class ForecastAdviser {
     public static void main(String[] args) {
 
         XMLParser parser = new XMLParser();
-        DBConnector dBc = new DBConnector();
+        DBConnector dBConnector = new DBConnector();
         Test test = new Test();
         
 //        Get data about weather for tomorrow from all providers
@@ -30,16 +30,16 @@ public class ForecastAdviser {
         Weather actualWeather = parser.actualWeatherFromYAHOO();
       
 //        Persist the data in DB:
-        dBc.writeToDB(weatherFromOpenweather);
-        dBc.writeToDB(weatherFromYandex);
-        dBc.writeToDB(weatherFromWeathercoua);
-        dBc.writeToDB(weatherFromYahoo);
-        dBc.writeToDB(actualWeather);
+        dBConnector.writeToDB(weatherFromOpenweather);
+        dBConnector.writeToDB(weatherFromYandex);
+        dBConnector.writeToDB(weatherFromWeathercoua);
+        dBConnector.writeToDB(weatherFromYahoo);
+        dBConnector.writeToDB(actualWeather);
   
 //        Printing all entries from DB
 //        test.showAllWeather();
         
 //        We want to analyze last 3 days:
-        dBc.analyse(3);
+        dBConnector.analyse(3);
     }
 }

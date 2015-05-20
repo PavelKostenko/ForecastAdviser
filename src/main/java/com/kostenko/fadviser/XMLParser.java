@@ -241,7 +241,6 @@ public class XMLParser {
         actualMaxTemp = fahrenheitToCelsius(actualMaxTemp);
 
         Weather today = new Weather("YAHOO", Calendar.getInstance(), actualMaxTemp, actualHumid, "actual");
-        System.out.println(today);
         return today;
     }
 
