@@ -7,6 +7,7 @@ package com.kostenko.main;
 
 import com.kostenko.db.DBConnector;
 import com.kostenko.db.Weather;
+import com.kostenko.logic.Analyzer;
 import com.kostenko.parsers.WeathercouaParser;
 import com.kostenko.parsers.WeatherParser;
 import com.kostenko.parsers.YahooParser;
@@ -25,24 +26,25 @@ public class ForecastAdviser {
     public static void main(String[] args) {
 
         DBConnector dBConnector = new DBConnector();
+        Analyzer analyzer = new Analyzer();
         
 //        Get data about weather for tomorrow from all providers
-        Weather openweatherForecast = new OpenweatherParser().getFutureWeather();
-        Weather yandexForecast = new YandexParser().getFutureWeather();
-        Weather weathercouaForecast = new WeathercouaParser().getFutureWeather();
-        Weather yahooForecast = new YahooParser().getFutureWeather();
+//        Weather openweatherForecast = new OpenweatherParser().getFutureWeather();
+//        Weather yandexForecast = new YandexParser().getFutureWeather();
+//        Weather weathercouaForecast = new WeathercouaParser().getFutureWeather();
+//        Weather yahooForecast = new YahooParser().getFutureWeather();
         
 //        Get actual data for today
-        Weather actualWeather = WeatherParser.getActualWeather();
+//        Weather actualWeather = WeatherParser.getActualWeather();
       
 //        Persist the data in DB:
-        dBConnector.writeToDB(openweatherForecast);
-        dBConnector.writeToDB(yandexForecast);
-        dBConnector.writeToDB(weathercouaForecast);
-        dBConnector.writeToDB(yahooForecast);
-        dBConnector.writeToDB(actualWeather);
+//        dBConnector.writeToDB(openweatherForecast);
+//        dBConnector.writeToDB(yandexForecast);
+//        dBConnector.writeToDB(weathercouaForecast);
+//        dBConnector.writeToDB(yahooForecast);
+//        dBConnector.writeToDB(actualWeather);
   
 //        We want to analyze last 3 days:
-        dBConnector.analyse(3);
+        analyzer.printWeather(dBConnector.readFromDB(3));
     }
 }
