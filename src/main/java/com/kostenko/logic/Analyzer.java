@@ -22,21 +22,22 @@ public class Analyzer {
 
     DBConnector dBConnector = new DBConnector();
 
+    int daysAnalyzed = 0;
+
+    float tempDiffOpenweather = 0;
+    float humidDiffOpenweather = 0;
+    float tempDiffYandex = 0;
+    float humidDiffYandex = 0;
+    float tempDiffWeathercoua = 0;
+    float humidDiffWeathercoua = 0;
+    float tempDiffYahoo = 0;
+    float humidDiffYahoo = 0;
+
     public void analyse(int daysToAnalyze) {
         List<Weather> weatherList = dBConnector.readFromDB(daysToAnalyze);
         if (weatherList.isEmpty()) {
             System.out.println("No weather records for previous " + daysToAnalyze + " days");
         } else {
-            int daysAnalyzed = 0;
-
-            float tempDiffOpenweather = 0;
-            float humidDiffOpenweather = 0;
-            float tempDiffYandex = 0;
-            float humidDiffYandex = 0;
-            float tempDiffWeathercoua = 0;
-            float humidDiffWeathercoua = 0;
-            float tempDiffYahoo = 0;
-            float humidDiffYahoo = 0;
 
             for (int i = 0; i < daysToAnalyze; i++) {
                 Calendar date = Calendar.getInstance();
@@ -48,33 +49,31 @@ public class Analyzer {
                 float actualHumidity;
                 float futureTemp;
                 float futureHumidity;
-                
-                List <Weather> actualWeatherList = weatherList
+
+                List<Weather> actualWeatherList = weatherList
                         .stream()
                         .filter(weather -> dF.format(weather.getDate().getTime())
                                 .equals(todayInString))
                         .filter(weather -> weather.getType().equals("actual"))
                         .collect(Collectors.toList());
-                
+
                 if (actualWeatherList.isEmpty()) {
                     System.out.println("No actual weather records for " + todayInString);
                 } else {
                     Weather actualWeather = actualWeatherList.get(0);
                     actualTemp = actualWeather.getMaxTemp();
                     actualHumidity = actualWeather.getHumidity();
-                    System.out.println("");
-                    System.out.println(String.format("%s actual data for %s %.1fC %.1f%%",
+                    System.out.println(String.format("\n%s actual data for %s %.1fC %.1f%%\n",
                             actualWeather.getProvider(),
                             todayInString,
                             roundFloat(actualTemp, 1),
                             actualHumidity));
-                    System.out.println("");
                     List<Weather> ForecastedWeatherlist = weatherList
-                        .stream()
-                        .filter(weather -> dF.format(weather.getDate().getTime())
-                                .equals(todayInString))
-                        .filter(weather -> weather.getType().equals("1dayforecast"))
-                        .collect(Collectors.toList());
+                            .stream()
+                            .filter(weather -> dF.format(weather.getDate().getTime())
+                                    .equals(todayInString))
+                            .filter(weather -> weather.getType().equals("1dayforecast"))
+                            .collect(Collectors.toList());
                     if (ForecastedWeatherlist.size() == 4) {
                         daysAnalyzed++;
                         for (int j = 0; j < ForecastedWeatherlist.size(); j++) {
@@ -119,22 +118,26 @@ public class Analyzer {
                     }
                 }
             }
-            if (daysAnalyzed > 0) {
-                System.out.println("");
-                System.out.println("daysAnalyzed " + daysAnalyzed);
-                System.out.println("");
-                System.out.println("tempDiffOpenweather " + roundFloat(tempDiffOpenweather / daysAnalyzed, 1));
-                System.out.println("humidDiffOpenweather " + roundFloat(humidDiffOpenweather / daysAnalyzed, 1));
-                System.out.println("");
-                System.out.println("tempDiffYandex " + roundFloat(tempDiffYandex / daysAnalyzed, 1));
-                System.out.println("humidDiffYandex " + roundFloat(humidDiffYandex / daysAnalyzed, 1));
-                System.out.println("");
-                System.out.println("tempDiffWeathercoua " + roundFloat(tempDiffWeathercoua / daysAnalyzed, 1));
-                System.out.println("humidDiffWeathercoua " + roundFloat(humidDiffWeathercoua / daysAnalyzed, 1));
-                System.out.println("");
-                System.out.println("tempDiffYahoo " + roundFloat(tempDiffYahoo / daysAnalyzed, 1));
-                System.out.println("humidDiffYahoo " + roundFloat(humidDiffYahoo / daysAnalyzed, 1));
-            }
+            PrintStatistics();
+        }
+    }
+
+    private void PrintStatistics() {
+        if (daysAnalyzed > 0) {
+            System.out.println("");
+            System.out.println("daysAnalyzed " + daysAnalyzed);
+            System.out.println("");
+            System.out.println("tempDiffOpenweather " + roundFloat(tempDiffOpenweather / daysAnalyzed, 1));
+            System.out.println("humidDiffOpenweather " + roundFloat(humidDiffOpenweather / daysAnalyzed, 1));
+            System.out.println("");
+            System.out.println("tempDiffYandex " + roundFloat(tempDiffYandex / daysAnalyzed, 1));
+            System.out.println("humidDiffYandex " + roundFloat(humidDiffYandex / daysAnalyzed, 1));
+            System.out.println("");
+            System.out.println("tempDiffWeathercoua " + roundFloat(tempDiffWeathercoua / daysAnalyzed, 1));
+            System.out.println("humidDiffWeathercoua " + roundFloat(humidDiffWeathercoua / daysAnalyzed, 1));
+            System.out.println("");
+            System.out.println("tempDiffYahoo " + roundFloat(tempDiffYahoo / daysAnalyzed, 1));
+            System.out.println("humidDiffYahoo " + roundFloat(humidDiffYahoo / daysAnalyzed, 1));
         }
     }
 

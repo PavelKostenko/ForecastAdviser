@@ -13,7 +13,6 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -22,7 +21,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -151,17 +149,6 @@ public abstract class WeatherParser {
         return tomorrow;
     }
 
-    static private Date stringToDate(String s) {
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-        Date date = null;
-        try {
-            date = format.parse(s);
-        } catch (ParseException ex) {
-            Logger.getLogger(WeatherParser.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return date;
-    }
-
     protected String tomorrowsDateInStringForYahoo(Date d) {
         DateFormat dF = new SimpleDateFormat("d MMM yyyy", Locale.ENGLISH);
         return dF.format(d);
@@ -170,5 +157,4 @@ public abstract class WeatherParser {
     protected static float fahrenheitToCelsius(float c) {
         return (c - 32) * 5 / 9.0f;
     }
-
 }
