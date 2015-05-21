@@ -5,7 +5,7 @@
  */
 package com.kostenko.db;
 
-import java.util.Calendar;
+import java.time.LocalDate;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -21,8 +21,8 @@ public class DBConnector {
     EntityManager em = eMF.createEntityManager();
     
     public void writeToDB(Weather w){
-        Query query = em.createQuery("SELECT e FROM Weather AS e WHERE e.date=:d and e.type=:t and e.provider=:p")
-                .setParameter("d",w.getDate())
+        Query query = em.createQuery("SELECT e FROM Weather AS e WHERE e.weatherDate=:d and e.type=:t and e.provider=:p")
+                .setParameter("d",w.getWeatherDate())
                 .setParameter("t",w.getType())
                 .setParameter("p", w.getProvider());
         List <Weather> list = query.getResultList();
@@ -53,12 +53,10 @@ public class DBConnector {
     }
     
     public List <Weather> readFromDB(int daysToAnalyze){
-        Calendar today = Calendar.getInstance();
-        Calendar startDate = Calendar.getInstance();
-        startDate.add(Calendar.DAY_OF_YEAR, -daysToAnalyze);
-        Query query = em.createQuery("SELECT e FROM Weather AS e WHERE e.date>:s and e.date<=:t")
-                    .setParameter("s",startDate)
-                    .setParameter("t", today);
+        
+        Query query = em.createQuery("SELECT e FROM Weather AS e WHERE e.weatherDate>:s and e.weatherDate<=:t")
+                    .setParameter("s",LocalDate.now().plusDays(-daysToAnalyze))
+                    .setParameter("t",LocalDate.now());
         return query.getResultList();
     }
 }

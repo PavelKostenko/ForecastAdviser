@@ -6,10 +6,7 @@
 package com.kostenko.db;
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
+import java.time.LocalDate;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,9 +25,9 @@ public class Weather implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Temporal(javax.persistence.TemporalType.DATE)
+//    @Temporal(javax.persistence.TemporalType.DATE)
 
-    protected Calendar date;
+    protected LocalDate weatherDate;
 
     String provider;
 
@@ -44,9 +41,9 @@ public class Weather implements Serializable {
 
     }
 
-    public Weather(String p, Calendar d, float t, int h, String tp) {
+    public Weather(String p, LocalDate d, float t, int h, String tp) {
         setProvider(p);
-        setDate(d);
+        setWeatherDate(d);
         setMaxTemp(t);
         setHumidity(h);
         setType(tp);
@@ -60,8 +57,8 @@ public class Weather implements Serializable {
         this.id = id;
     }
 
-    public Calendar getDate() {
-        return date;
+    public LocalDate getWeatherDate() {
+        return weatherDate;
     }
 
     public String getProvider() {
@@ -80,8 +77,8 @@ public class Weather implements Serializable {
         return type;
     }
 
-    public void setDate(Calendar date) {
-        this.date = date;
+    public void setWeatherDate(LocalDate weatherDate) {
+        this.weatherDate = weatherDate;
     }
 
     public void setProvider(String provider) {
@@ -122,11 +119,9 @@ public class Weather implements Serializable {
 
     @Override
     public String toString() {
-        DateFormat dF = new SimpleDateFormat("d MMM yyyy", Locale.ENGLISH);
-        String dateInString = dF.format(this.getDate().getTime());
         String result = String.format("%s (%s): ***** [TEMP=%.1f] [HUMIDITY=%d%%] [TYPE=%s]\n",
                 getProvider(),
-                dateInString,
+                getWeatherDate().toString(),
                 getMaxTemp(),
                 getHumidity(),
                 getType());

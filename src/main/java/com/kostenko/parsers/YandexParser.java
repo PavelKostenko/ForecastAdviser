@@ -7,7 +7,7 @@ package com.kostenko.parsers;
 
 import com.kostenko.db.Weather;
 import static com.kostenko.parsers.WeatherParser.MAX_INIT_TEMP;
-import java.util.Calendar;
+import java.time.LocalDate;
 import org.w3c.dom.Node;
 
 /**
@@ -29,7 +29,7 @@ public class YandexParser extends WeatherParser {
         Node day = getSubnodes(forecast, "day")
                 .stream()
                 .filter(node -> getAttribute(node, "date")
-                        .equals(SIMPLE_DATE_FORMAT.format(getTomorrow())))
+                        .equals(LocalDate.now().toString()))
                 .findAny().get();
 
         Node daypartDay = getSubnodes(day, "day_part")
@@ -61,9 +61,7 @@ public class YandexParser extends WeatherParser {
             maxTempValue = minTempValue - maxTempValue;
         }
         int humid = dayHumid;
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DAY_OF_YEAR, 1);
-        Weather today = new Weather("YANDEX", cal, maxTempValue, humid, "1dayforecast");
+        Weather today = new Weather("YANDEX", LocalDate.now().plusDays(1), maxTempValue, humid, "1dayforecast");
         return today;
     }
 }

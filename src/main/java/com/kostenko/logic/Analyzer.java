@@ -9,7 +9,7 @@ import com.kostenko.db.DBConnector;
 import com.kostenko.db.Weather;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -40,11 +40,9 @@ public class Analyzer {
         } else {
 
             for (int i = 0; i < daysToAnalyze; i++) {
-                Calendar date = Calendar.getInstance();
-                date.add(Calendar.DAY_OF_YEAR, -i);
-                DateFormat dF = new SimpleDateFormat("d MMM yyyy", Locale.ENGLISH);
-                String todayInString = dF.format(date.getTime());
-
+                
+                LocalDate date = LocalDate.now().plusDays(-i);
+                
                 float actualTemp;
                 float actualHumidity;
                 float futureTemp;
@@ -52,26 +50,24 @@ public class Analyzer {
 
                 List<Weather> actualWeatherList = weatherList
                         .stream()
-                        .filter(weather -> dF.format(weather.getDate().getTime())
-                                .equals(todayInString))
+                        .filter(weather -> weather.getWeatherDate().equals(date))
                         .filter(weather -> weather.getType().equals("actual"))
                         .collect(Collectors.toList());
 
                 if (actualWeatherList.isEmpty()) {
-                    System.out.println("No actual weather records for " + todayInString);
+                    System.out.println("No actual weather records for " + date.toString());
                 } else {
                     Weather actualWeather = actualWeatherList.get(0);
                     actualTemp = actualWeather.getMaxTemp();
                     actualHumidity = actualWeather.getHumidity();
                     System.out.println(String.format("\n%s actual data for %s %.1fC %.1f%%\n",
                             actualWeather.getProvider(),
-                            todayInString,
+                            date.toString(),
                             roundFloat(actualTemp, 1),
                             actualHumidity));
                     List<Weather> ForecastedWeatherlist = weatherList
                             .stream()
-                            .filter(weather -> dF.format(weather.getDate().getTime())
-                                    .equals(todayInString))
+                            .filter(weather -> weather.getWeatherDate().equals(date))
                             .filter(weather -> weather.getType().equals("1dayforecast"))
                             .collect(Collectors.toList());
                     if (ForecastedWeatherlist.size() == 4) {
@@ -86,7 +82,7 @@ public class Analyzer {
                             float diffHumid = Math.abs(actualHumidity - futureHumidity);
                             System.out.println(String.format("%s forecast for %s %.1fC %.1f%%. Difference is: %.1fC %.1f%%.",
                                     provider,
-                                    todayInString,
+                                    date.toString(),
                                     futureTemp,
                                     futureHumidity,
                                     roundFloat(diffTemp, 1),
@@ -114,7 +110,7 @@ public class Analyzer {
                             }
                         }
                     } else {
-                        System.out.println("Not enough forecast data from all providers for " + todayInString);
+                        System.out.println("Not enough forecast data from all providers for " + date.toString());
                     }
                 }
             }

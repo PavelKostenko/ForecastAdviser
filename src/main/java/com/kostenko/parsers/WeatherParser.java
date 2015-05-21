@@ -12,11 +12,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -91,7 +89,7 @@ public abstract class WeatherParser {
         actualMaxTemp = Float.parseFloat(getAttribute(yweatherCondition, "temp"));
         actualMaxTemp = fahrenheitToCelsius(actualMaxTemp);
 
-        Weather today = new Weather("YAHOO", Calendar.getInstance(), actualMaxTemp, actualHumid, "actual");
+        Weather today = new Weather("YAHOO", LocalDate.now(), actualMaxTemp, actualHumid, "actual");
         return today;
     }
 
@@ -140,18 +138,6 @@ public abstract class WeatherParser {
 
         transformer.transform(new DOMSource(doc),
                 new StreamResult(new OutputStreamWriter(out, "UTF-8")));
-    }
-
-    protected Date getTomorrow() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, 1);
-        Date tomorrow = calendar.getTime();
-        return tomorrow;
-    }
-
-    protected String tomorrowsDateInStringForYahoo(Date d) {
-        DateFormat dF = new SimpleDateFormat("d MMM yyyy", Locale.ENGLISH);
-        return dF.format(d);
     }
 
     protected static float fahrenheitToCelsius(float c) {

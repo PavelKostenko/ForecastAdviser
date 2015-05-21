@@ -6,7 +6,7 @@
 package com.kostenko.parsers;
 
 import com.kostenko.db.Weather;
-import java.util.Calendar;
+import java.time.LocalDate;
 import org.w3c.dom.Node;
 
 /**
@@ -26,7 +26,7 @@ public class OpenweatherParser extends WeatherParser {
         Node time = getSubnodes(forecast, "time")
                 .stream()
                 .filter(node -> getAttribute(node, "day")
-                        .equals(SIMPLE_DATE_FORMAT.format(getTomorrow())))
+                        .equals(LocalDate.now().plusDays(1).toString()))
                 .findAny().get();
 
         Node temperature = getSubnode(time, "temperature");
@@ -34,10 +34,9 @@ public class OpenweatherParser extends WeatherParser {
 
         Node humidity = getSubnode(time, "humidity");
         humid = Integer.parseInt(getAttribute(humidity, "value"));
-
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DAY_OF_YEAR, 1);
-        Weather today = new Weather("OPENWEATHER", cal, maxTempValue, humid, "1dayforecast");
+        
+        Weather today = new Weather("OPENWEATHER", LocalDate.now().plusDays(1), maxTempValue, humid, "1dayforecast");
         return today;
+        
     }
 }

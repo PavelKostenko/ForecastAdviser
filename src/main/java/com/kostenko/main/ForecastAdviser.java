@@ -13,6 +13,7 @@ import com.kostenko.parsers.WeatherParser;
 import com.kostenko.parsers.YahooParser;
 import com.kostenko.parsers.OpenweatherParser;
 import com.kostenko.parsers.YandexParser;
+import com.kostenko.test.Test;
 
 /**
  *
@@ -46,5 +47,8 @@ public class ForecastAdviser {
   
 //        We want to analyze last 3 days:
         analyzer.analyse(3);
+        
+//        Test test = new Test();
+//        test.yahooParsing();
     }
 }

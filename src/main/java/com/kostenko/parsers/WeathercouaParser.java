@@ -7,7 +7,7 @@ package com.kostenko.parsers;
 
 import com.kostenko.db.Weather;
 import static com.kostenko.parsers.WeatherParser.MAX_INIT_TEMP;
-import java.util.Calendar;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.w3c.dom.Node;
@@ -32,7 +32,7 @@ public class WeathercouaParser extends WeatherParser {
         List<Node> days = getSubnodes(forecastSub, "day")
                 .stream()
                 .filter(node -> getAttribute(node, "date")
-                        .equals(SIMPLE_DATE_FORMAT.format(getTomorrow())))
+                        .equals(LocalDate.now().plusDays(1).toString()))
                 .collect(Collectors.toList());
 
         for (Node day : days) {
@@ -53,9 +53,7 @@ public class WeathercouaParser extends WeatherParser {
             maxHumid = (maxHumid < localMaxHumid) ? localMaxHumid : maxHumid;
         }
         int humid = (minHumid + maxHumid) / 2;
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DAY_OF_YEAR, 1);
-        Weather today = new Weather("WEATHERCOUA", cal, maxTempValue, humid, "1dayforecast");
+        Weather today = new Weather("WEATHERCOUA", LocalDate.now().plusDays(1), maxTempValue, humid, "1dayforecast");
         return today;
     }
 }
