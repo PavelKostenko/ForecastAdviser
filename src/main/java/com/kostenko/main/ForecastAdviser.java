@@ -46,8 +46,8 @@ public class ForecastAdviser {
         dBConnector.writeToDB(actualWeather);
   
 //        We want to analyze last 3 days:
-        analyzer.analyse(3);
-        
+//        analyzer.analyzeInTextMode(3);
+        analyzer.analyzeInGUIMode(3);
 //        Test test = new Test();
 //        test.yahooParsing();
     }

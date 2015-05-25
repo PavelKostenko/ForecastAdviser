@@ -7,12 +7,18 @@ package com.kostenko.logic;
 
 import com.kostenko.db.DBConnector;
 import com.kostenko.db.Weather;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import com.kostenko.gui.ChartPanel;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 /**
  *
@@ -33,16 +39,16 @@ public class Analyzer {
     float tempDiffYahoo = 0;
     float humidDiffYahoo = 0;
 
-    public void analyse(int daysToAnalyze) {
+    public void getDifference(int daysToAnalyze) {
         List<Weather> weatherList = dBConnector.readFromDB(daysToAnalyze);
         if (weatherList.isEmpty()) {
             System.out.println("No weather records for previous " + daysToAnalyze + " days");
         } else {
 
             for (int i = 0; i < daysToAnalyze; i++) {
-                
+
                 LocalDate date = LocalDate.now().plusDays(-i);
-                
+
                 float actualTemp;
                 float actualHumidity;
                 float futureTemp;
@@ -114,11 +120,49 @@ public class Analyzer {
                     }
                 }
             }
-            PrintStatistics();
         }
     }
 
-    private void PrintStatistics() {
+    public void analyzeInTextMode(int daysToAnalyze) {
+        getDifference(daysToAnalyze);
+        printStatistics();
+    }
+
+    public void analyzeInGUIMode(int daysToAnalyze) {
+        getDifference(daysToAnalyze);
+
+        JFrame f = new JFrame();
+        f.setSize(400, 300);
+        
+        double[] values = new double[4];
+        String[] names = new String[4];
+        
+        values[0] = roundFloat(tempDiffOpenweather / daysAnalyzed, 1);
+        names[0] = "www.openweather.com";
+
+        values[1] = roundFloat(tempDiffYandex / daysAnalyzed, 1);
+        names[1] = "www.yandex.ru";
+
+        values[2] = roundFloat(tempDiffWeathercoua / daysAnalyzed, 1);
+        names[2] = "www.weather.co.ua";
+        
+        values[3] = roundFloat(tempDiffYahoo / daysAnalyzed, 1);
+        names[3] = "www.yahoo.com";
+        
+        f.getContentPane().add(new ChartPanel(values, names, "Temperature forecast fault:"));
+        
+        WindowListener wndCloser = new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
+            }
+        };
+        
+        
+        f.addWindowListener(wndCloser);
+        f.setVisible(true);
+    }
+
+    private void printStatistics() {
         if (daysAnalyzed > 0) {
             System.out.println("");
             System.out.println("daysAnalyzed " + daysAnalyzed);
