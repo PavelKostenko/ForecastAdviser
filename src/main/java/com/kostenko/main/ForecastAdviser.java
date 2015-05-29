@@ -7,13 +7,13 @@ package com.kostenko.main;
 
 import com.kostenko.db.DBConnector;
 import com.kostenko.db.Weather;
+import com.kostenko.gui.MainWindow;
 import com.kostenko.logic.Analyzer;
 import com.kostenko.parsers.WeathercouaParser;
 import com.kostenko.parsers.WeatherParser;
 import com.kostenko.parsers.YahooParser;
 import com.kostenko.parsers.OpenweatherParser;
 import com.kostenko.parsers.YandexParser;
-import com.kostenko.test.Test;
 
 /**
  *
@@ -45,9 +45,8 @@ public class ForecastAdviser {
         dBConnector.writeToDB(yahooForecast);
         dBConnector.writeToDB(actualWeather);
   
-//        We want to analyze last 3 days:
-//        analyzer.analyzeInTextMode(3);
-        analyzer.analyzeInGUIMode(3);
+        new MainWindow(3);
+
 //        Test test = new Test();
 //        test.yahooParsing();
     }

@@ -8,17 +8,13 @@ package com.kostenko.logic;
 import com.kostenko.db.DBConnector;
 import com.kostenko.db.Weather;
 import com.kostenko.gui.ChartPanel;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.swing.BoxLayout;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 /**
  *
@@ -28,17 +24,21 @@ public class Analyzer {
 
     DBConnector dBConnector = new DBConnector();
 
-    int daysAnalyzed = 0;
+    public int daysAnalyzed = 0;
 
-    float tempDiffOpenweather = 0;
-    float humidDiffOpenweather = 0;
-    float tempDiffYandex = 0;
-    float humidDiffYandex = 0;
-    float tempDiffWeathercoua = 0;
-    float humidDiffWeathercoua = 0;
-    float tempDiffYahoo = 0;
-    float humidDiffYahoo = 0;
+    public float tempDiffOpenweather = 0;
+    public float humidDiffOpenweather = 0;
+    public float tempDiffYandex = 0;
+    public float humidDiffYandex = 0;
+    public float tempDiffWeathercoua = 0;
+    public float humidDiffWeathercoua = 0;
+    public float tempDiffYahoo = 0;
+    public float humidDiffYahoo = 0;
 
+    public final String [] NAMES = {"www.openweather.com","www.yandex.ru","www.weather.co.ua","www.yahoo.com"};
+    public double [] humidities = new double [4];
+    public double [] temperatures = new double [4];
+    
     public void getDifference(int daysToAnalyze) {
         List<Weather> weatherList = dBConnector.readFromDB(daysToAnalyze);
         if (weatherList.isEmpty()) {
@@ -120,46 +120,24 @@ public class Analyzer {
                     }
                 }
             }
+            if (daysAnalyzed>0){
+                temperatures[0] = roundFloat(tempDiffOpenweather / daysAnalyzed, 1);
+                temperatures[1] = roundFloat(tempDiffYandex / daysAnalyzed, 1);
+                temperatures[2] = roundFloat(tempDiffWeathercoua / daysAnalyzed, 1);
+                temperatures[3] = roundFloat(tempDiffYahoo / daysAnalyzed, 1);
+                
+                humidities[0] = roundFloat (humidDiffOpenweather / daysAnalyzed, 1);
+                humidities[1] = roundFloat (humidDiffYandex / daysAnalyzed, 1);
+                humidities[2] = roundFloat (humidDiffWeathercoua / daysAnalyzed, 1);
+                humidities[3] = roundFloat (humidDiffYahoo / daysAnalyzed, 1);
+                
+            }
         }
     }
 
     public void analyzeInTextMode(int daysToAnalyze) {
         getDifference(daysToAnalyze);
         printStatistics();
-    }
-
-    public void analyzeInGUIMode(int daysToAnalyze) {
-        getDifference(daysToAnalyze);
-
-        JFrame f = new JFrame();
-        f.setSize(400, 300);
-        
-        double[] values = new double[4];
-        String[] names = new String[4];
-        
-        values[0] = roundFloat(tempDiffOpenweather / daysAnalyzed, 1);
-        names[0] = "www.openweather.com";
-
-        values[1] = roundFloat(tempDiffYandex / daysAnalyzed, 1);
-        names[1] = "www.yandex.ru";
-
-        values[2] = roundFloat(tempDiffWeathercoua / daysAnalyzed, 1);
-        names[2] = "www.weather.co.ua";
-        
-        values[3] = roundFloat(tempDiffYahoo / daysAnalyzed, 1);
-        names[3] = "www.yahoo.com";
-        
-        f.getContentPane().add(new ChartPanel(values, names, "Temperature forecast fault:"));
-        
-        WindowListener wndCloser = new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                System.exit(0);
-            }
-        };
-        
-        
-        f.addWindowListener(wndCloser);
-        f.setVisible(true);
     }
 
     private void printStatistics() {
