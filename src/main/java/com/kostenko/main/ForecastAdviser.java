@@ -13,6 +13,7 @@ import com.kostenko.parsers.WeathercouaParser;
 import com.kostenko.parsers.WeatherParser;
 import com.kostenko.parsers.YahooParser;
 import com.kostenko.parsers.OpenweatherParser;
+import com.kostenko.parsers.StubParser;
 import com.kostenko.parsers.YandexParser;
 
 /**
@@ -29,24 +30,31 @@ public class ForecastAdviser {
         DBConnector dBConnector = new DBConnector();
         Analyzer analyzer = new Analyzer();
         
-//        Get data about weather for tomorrow from all providers
-        Weather openweatherForecast = new OpenweatherParser().getFutureWeather();
-        Weather yandexForecast = new YandexParser().getFutureWeather();
-        Weather weathercouaForecast = new WeathercouaParser().getFutureWeather();
-        Weather yahooForecast = new YahooParser().getFutureWeather();
-        
-//        Get actual data for today
-        Weather actualWeather = WeatherParser.getActualWeather();
-      
-//        Persist the data in DB:
-        dBConnector.writeToDB(openweatherForecast);
-        dBConnector.writeToDB(yandexForecast);
-        dBConnector.writeToDB(weathercouaForecast);
-        dBConnector.writeToDB(yahooForecast);
-        dBConnector.writeToDB(actualWeather);
+////        Get data about weather for tomorrow from all providers
+//        Weather openweatherForecast = new OpenweatherParser().getFutureWeather();
+//        Weather yandexForecast = new YandexParser().getFutureWeather();
+//        Weather weathercouaForecast = new WeathercouaParser().getFutureWeather();
+//        Weather yahooForecast = new YahooParser().getFutureWeather();
+//        
+////        Get actual data for today
+//        Weather actualWeather = WeatherParser.getActualWeather();
+//      
+////        Persist the data in DB:
+//        dBConnector.writeToDB(openweatherForecast);
+//        dBConnector.writeToDB(yandexForecast);
+//        dBConnector.writeToDB(weathercouaForecast);
+//        dBConnector.writeToDB(yahooForecast);
+//        dBConnector.writeToDB(actualWeather);
   
-        new MainWindow(3);
+//      Filling empty DB with random weather data if needed:
+        
+        StubParser stubParser = new StubParser();
+        for (Weather w: stubParser.getStubWeather(3)){
+            dBConnector.writeToDB(w);
+        }
 
+        new MainWindow(3);
+        
 //        Test test = new Test();
 //        test.yahooParsing();
     }
