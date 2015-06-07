@@ -30,28 +30,28 @@ public class ForecastAdviser {
         DBConnector dBConnector = new DBConnector();
         Analyzer analyzer = new Analyzer();
         
-////        Get data about weather for tomorrow from all providers
-//        Weather openweatherForecast = new OpenweatherParser().getFutureWeather();
-//        Weather yandexForecast = new YandexParser().getFutureWeather();
-//        Weather weathercouaForecast = new WeathercouaParser().getFutureWeather();
-//        Weather yahooForecast = new YahooParser().getFutureWeather();
-//        
-////        Get actual data for today
-//        Weather actualWeather = WeatherParser.getActualWeather();
-//      
-////        Persist the data in DB:
-//        dBConnector.writeToDB(openweatherForecast);
-//        dBConnector.writeToDB(yandexForecast);
-//        dBConnector.writeToDB(weathercouaForecast);
-//        dBConnector.writeToDB(yahooForecast);
-//        dBConnector.writeToDB(actualWeather);
+//        Get data about weather for tomorrow from all providers
+        Weather openweatherForecast = new OpenweatherParser().getFutureWeather();
+        Weather yandexForecast = new YandexParser().getFutureWeather();
+        Weather weathercouaForecast = new WeathercouaParser().getFutureWeather();
+        Weather yahooForecast = new YahooParser().getFutureWeather();
+        
+//        Get actual data for today
+        Weather actualWeather = WeatherParser.getActualWeather();
+      
+//        Persist the data in DB:
+        dBConnector.writeToDB(openweatherForecast);
+        dBConnector.writeToDB(yandexForecast);
+        dBConnector.writeToDB(weathercouaForecast);
+        dBConnector.writeToDB(yahooForecast);
+        dBConnector.writeToDB(actualWeather);
   
 //      Filling empty DB with random weather data if needed:
         
-        StubParser stubParser = new StubParser();
-        for (Weather w: stubParser.getStubWeather(3)){
-            dBConnector.writeToDB(w);
-        }
+//        StubParser stubParser = new StubParser();
+//        for (Weather w: stubParser.getStubWeather(3)){
+//            dBConnector.writeToDB(w);
+//        }
 
         new MainWindow(3);
         

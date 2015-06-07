@@ -7,14 +7,9 @@ package com.kostenko.logic;
 
 import com.kostenko.db.DBConnector;
 import com.kostenko.db.Weather;
-import com.kostenko.gui.ChartPanel;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.swing.JFrame;
 
 /**
  *
